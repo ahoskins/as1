@@ -5,6 +5,7 @@ import java.util.Date;
 /**
  * Created by Andrew on 2016-01-27.
  */
+// immutable fuel entry
 public class FuelEntry {
     private Date mDate;
     private String mStation;
@@ -12,8 +13,6 @@ public class FuelEntry {
     private String mGrade;
     private float mAmount;
     private float mUnitCost;
-
-    // fuel cost is computer and no way to set it from the outside
     private float mCost;
 
     // CONSTRUCTOR
@@ -26,7 +25,7 @@ public class FuelEntry {
         this.mGrade = mGrade;
         this.mAmount = mAmount;
         this.mUnitCost = mUnitCost;
-        this.mCost = mUnitCost * mAmount;
+        this.mCost = mUnitCost * mAmount / 100;
     }
 
     // GETTERS
@@ -55,42 +54,7 @@ public class FuelEntry {
         return mCost;
     }
 
-    // SETTERS
-    // no way to set the cost, it is computer by the class itself
-
-    public void setDate(Date mDate) {
-        this.mDate = mDate;
-    }
-
-    public void setStation(String mStation) {
-        this.mStation = mStation;
-    }
-
-    public void setOdometer(float mOdometer) {
-        this.mOdometer = mOdometer;
-    }
-
-    public void setGrade(String mGrade) {
-        this.mGrade = mGrade;
-    }
-
-    public void setAmount(float mAmount) {
-        this.mAmount = mAmount;
-        updateTotalCost();
-    }
-
-    public void setUnitCost(float mUnitCost) {
-        this.mUnitCost = mUnitCost;
-        updateTotalCost();
-    }
-
     public Date getDate() {
         return mDate;
-    }
-
-    // PRIVATE
-
-    private void updateTotalCost() {
-        this.mCost = this.mUnitCost + this.mAmount;
     }
 }
