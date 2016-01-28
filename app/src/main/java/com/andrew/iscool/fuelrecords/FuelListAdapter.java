@@ -56,13 +56,13 @@ public class FuelListAdapter extends ArrayAdapter<FuelEntry> {
 
         // Date - Station - Cost
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
-        main.setText(sdf.format(data.getDate()) + " - " +
-                     data.getStation() + " - $" +
-                     data.getCost());
+        main.setText(sdf.format(data.getDate()) + "\u2014" +
+                     data.getStation() + " \u2014 $" +
+                     String.format("%.2f", data.getCost()));
         // Odometer - Grade - Amount - Unit Cost
-        secondary.setText("Odometer: " + data.getOdometer() + "km - Grade: " +
-                          data.getGrade() + " - Amount: " + data.getAmount() +
-                          "L - Unit Cost: " + data.getUnitCost() + "cents/L");
+        secondary.setText("Odometer: " + String.format("%.1f", data.getOdometer()) + "km \u2014 Grade: " +
+                          data.getGrade() + " \u2014 Amount: " + String.format("%.3f", data.getAmount()) +
+                          "L \u2014 Unit Cost: " + String.format("%.1f", data.getUnitCost()) + "cents/L");
 
         return vi;
     }

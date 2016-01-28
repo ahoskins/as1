@@ -2,8 +2,6 @@ package com.andrew.iscool.fuelrecords;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,13 +22,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
-
-/*
-* TODO:
-* - file stuff. load in onCreate and save in onStop (done)
-* - format with correct number of decimal places
-* - display total fuel cost and update dynamically
-* */
 
 public class FuelListActivity extends ActionBarActivity implements EntryDialog.EntryDialogListener {
     private static String FILENAME = "fuel.txt";
@@ -80,19 +71,12 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
         computeTotalCost();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        saveToFile();
-    }
-
     private void computeTotalCost() {
         mTotalCostValue = 0;
         for (FuelEntry entry : mFuelData) {
             mTotalCostValue += entry.getCost();
         }
-        mTotalCost.setText("Total Cost: " + mTotalCostValue);
+        mTotalCost.setText("Total Cost: " + String.format("%.2f", mTotalCostValue));
     }
 
     private void readFromFile() {
@@ -129,23 +113,6 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_fuel_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     // LISTENER FROM DIALOG
 
     @Override
@@ -160,6 +127,7 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
         }
 
         computeTotalCost();
+        saveToFile();
 
         mAdapter.notifyDataSetChanged();
     }
