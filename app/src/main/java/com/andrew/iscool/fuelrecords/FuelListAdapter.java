@@ -12,14 +12,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 /**
- * Created by Andrew on 2016-01-27.
+ * Custom adapter that gives a special view for each row of fuel entry.
+ * Clicking a row lets you edit the entry.
  */
 public class FuelListAdapter extends ArrayAdapter<FuelEntry> {
     Context mContext;
     ArrayList<FuelEntry> mData;
-
-    // all the information is showed in each row
-    // when you click on a row it opens the edit dialog for that
 
     public FuelListAdapter(Context context, int resource, ArrayList<FuelEntry> fuelList) {
         super(context, resource, fuelList);

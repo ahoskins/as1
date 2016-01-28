@@ -26,20 +26,33 @@ import java.util.Date;
 /*
 * TODO:
 * - UML diagram
-* - document code
+* - document code (done)
 * - make demo video
 * - add APK file to repo
-* - test running on lab machines
+* - test running on lab machines (done)
+* - unit tests (done)
 * */
 
+/**
+* The main and only activity of the app.
+*
+* It launches a DialogFragment and communicates over
+* the EntryDialogListener, that's why it implements this interface.
+*
+* This activity loads and saves the data from file, and stores the instance of the data.
+* This pattern was chosen rather than a Singleton with data because there only needs to be one activity.
+* */
 public class FuelListActivity extends ActionBarActivity implements EntryDialog.EntryDialogListener {
     private static String FILENAME = "fuel.txt";
 
+    // UI pieces
     private Button mNewEntryButton;
     private ListView mFuelListView;
+    private TextView mTotalCost;
+
+    // Other global things
     private ArrayList<FuelEntry> mFuelData;
     private FuelListAdapter mAdapter;
-    private TextView mTotalCost;
     private float mTotalCostValue;
 
     @Override
@@ -77,10 +90,13 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
             }
         });
 
-        computeTotalCost();
+        updateTotalCost();
     }
 
-    private void computeTotalCost() {
+    /*
+    * Compute total cost of all fuel and display on UI
+    * */
+    private void updateTotalCost() {
         mTotalCostValue = 0;
         for (FuelEntry entry : mFuelData) {
             mTotalCostValue += entry.getCost();
@@ -88,6 +104,9 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
         mTotalCost.setText("Total Cost: " + String.format("%.2f", mTotalCostValue));
     }
 
+    /*
+    * Use GSON to read array from file and update mFuelData member variable
+    * */
     private void readFromFile() {
         // if file exists, read in, otherwise it will be empty array
         try {
@@ -105,6 +124,9 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
         }
     }
 
+    /*
+    * Save current contents of mFuelData to file
+    * */
     private void saveToFile() {
         try {
             FileOutputStream fos = openFileOutput(FILENAME, 0);
@@ -122,25 +144,39 @@ public class FuelListActivity extends ActionBarActivity implements EntryDialog.E
         }
     }
 
-    // LISTENER FROM DIALOG
+    /**
+    * Listener methods from dialog
+    * */
 
+    /*
+     *  Called when dialog is saved, and thus all passed data is valid (Dialog does the validation)
+     *  Last argument, i, will be null if new entry, otherwise it will be the index of the entry to edit
+     */
     @Override
     public void onDialogPositiveClick(Date date, String station, float odometer, String grade, float amount, float unitCost, Integer i) {
         FuelEntry fe = new FuelEntry(date, station, odometer, grade, amount, unitCost);
 
-        // if not null, then replace, otherwise add to the end
         if (i != null) {
+            // FuelEntry is an immutable object, so replace at specified index
             mFuelData.set(i, fe);
         } else {
+            // otherwise, it's a new entry, add it to the end
             mFuelData.add(fe);
         }
 
-        computeTotalCost();
+
+        updateTotalCost();
+
+        // immediately write changes to file
         saveToFile();
 
         mAdapter.notifyDataSetChanged();
     }
 
+    /*
+    * When editing an entry, the DialogFragment keeps to know the field values of the FuelEntry we are editing
+    * This is a getter for that.
+    * */
     @Override
     public FuelEntry getFuelData(int i) {
         return this.mFuelData.get(i);

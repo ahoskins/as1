@@ -19,8 +19,11 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Andrew on 2016-01-27.
- */
+* Dialog fragment launched from activity when editing or creating a fuel entry.
+ * If editing, the index of the currently editing entry is passed in as a Bundle.
+ * If editing, it will query the activity for the values of all the fields.
+ * If creating, the index will be null and the fields will be blank to start.
+* */
 public class EntryDialog extends DialogFragment {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
     private EntryDialogListener mListener;
@@ -59,6 +62,7 @@ public class EntryDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // will be non-null when editing
         mDataIndex = getArguments() != null ? getArguments().getInt("index"): null;
     }
 
@@ -67,7 +71,7 @@ public class EntryDialog extends DialogFragment {
         super.onAttach(a);
 
         try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
+            // grab this reference so we can communicate with the activity
             mListener = (EntryDialogListener) a;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
@@ -103,6 +107,7 @@ public class EntryDialog extends DialogFragment {
             mUnitCostValue = fe.getUnitCost();
         }
 
+        // set the validation on the text fields
         mDate.addTextChangedListener((new GenericTextWatcher(mDate)));
         mOdometer.addTextChangedListener((new GenericTextWatcher(mOdometer)));
         mAmount.addTextChangedListener((new GenericTextWatcher(mAmount)));
@@ -112,6 +117,9 @@ public class EntryDialog extends DialogFragment {
 
     }
 
+    /*
+    * The save button is only enabled if all fields are currently valid
+    * */
     private void checkIfSaveEnabled() {
         // if all buttons filled out validly, then enable save button
         if (mDateValue != null && mOdometerValue != null && mAmountValue != null
@@ -127,7 +135,7 @@ public class EntryDialog extends DialogFragment {
 
         // android hates being cool, so it makes me wait till here till I can call this
         if (mDataIndex != null) {
-            // if creating, then start off being disabled
+            // if creating, then start off being disabled because the fields haven't been set yet
             mAlertDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(true);
         } else {
             mAlertDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);
@@ -170,6 +178,10 @@ public class EntryDialog extends DialogFragment {
         return mAlertDialog;
     }
 
+    /*
+    * Wrap TextWatcher so we have less duplication of code.  Some of the UI has slightly different
+    * validation and this encapsulates that in the switch statement.
+    * */
     private class GenericTextWatcher implements TextWatcher {
         private EditText view;
 
@@ -184,15 +196,16 @@ public class EntryDialog extends DialogFragment {
         public void afterTextChanged(Editable t) {
             String text = t.toString();
 
+            /*
+            * When not valid, set to null and disable save button and set error on text field
+            * When valid, set to value and check if the button can be enabled
+            * */
             switch (view.getId()) {
                 case R.id.date:
                     try {
                         mDateValue = sdf.parse(text);
-                        // check if all values are non null
                         checkIfSaveEnabled();
                     } catch (ParseException e) {
-                        // set to null
-                        // disable save button
                         mDate.setError("Required field (yyyy-mm-dd)");
                         mDateValue = null;
                         mAlertDialog.getButton(Dialog.BUTTON_POSITIVE).setEnabled(false);

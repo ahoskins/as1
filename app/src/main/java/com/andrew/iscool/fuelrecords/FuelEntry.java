@@ -3,9 +3,9 @@ package com.andrew.iscool.fuelrecords;
 import java.util.Date;
 
 /**
- * Created by Andrew on 2016-01-27.
- */
-// immutable fuel entry
+* POJO representing a single fuel entry.  This object is immutable.
+ * This object encapsulates the computation of the cost for this fuel entry.
+* */
 public class FuelEntry {
     private Date mDate;
     private String mStation;
