@@ -23,6 +23,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 
+/*
+* TODO:
+* - UML diagram
+* - document code
+* - make demo video
+* - add APK file to repo
+* - test running on lab machines
+* */
+
 public class FuelListActivity extends ActionBarActivity implements EntryDialog.EntryDialogListener {
     private static String FILENAME = "fuel.txt";
 
