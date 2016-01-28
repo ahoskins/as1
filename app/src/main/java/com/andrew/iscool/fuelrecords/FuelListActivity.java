@@ -8,9 +8,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+/*
+* TODO:
+* - edit entry menu
+*   - on click row, open dialog passing in current values for that Fuel Entry
+*   - listener in activity gets index and replaces with new values
+*
+* */
 
 
 public class FuelListActivity extends ActionBarActivity implements CreateEntryDialog.EntryDialogListener {
@@ -27,6 +36,15 @@ public class FuelListActivity extends ActionBarActivity implements CreateEntryDi
         mNewEntryButton = (Button) findViewById(R.id.newEntryButton);
         mFuelListView = (ListView) findViewById(R.id.fuelList);
 
+        // wtf is going on
+        Toast.makeText(getApplicationContext(), "oncreate ", Toast.LENGTH_LONG).show();
+        mFuelData = new ArrayList<FuelEntry>();
+        FuelEntry fe = new FuelEntry(new Date(System.currentTimeMillis()), "Buylea", 200, "Normal", 34.5f, 70f);
+        mFuelData.add(fe);
+
+        mAdapter = new FuelListAdapter(getApplicationContext(), R.layout.fuel_row, mFuelData);
+        mFuelListView.setAdapter(mAdapter);
+
         // set listeners
         mNewEntryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +58,11 @@ public class FuelListActivity extends ActionBarActivity implements CreateEntryDi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // open the edit menu with and use this "position" index
+                CreateEntryDialog d = new CreateEntryDialog();
+                Bundle bundle = new Bundle();
+                bundle.putInt("index", position);
+                d.setArguments(bundle);
+                d.show(getSupportFragmentManager(), "edit");
             }
         });
     }
@@ -51,13 +74,9 @@ public class FuelListActivity extends ActionBarActivity implements CreateEntryDi
         // read mFuelData from file using GSON
 
         // always have one dummy entry for now
-        mFuelData = new ArrayList<FuelEntry>();
-        FuelEntry fe = new FuelEntry(new Date(System.currentTimeMillis()), "Buylea", 200, "Normal", 34.5f, 70f);
-        mFuelData.add(fe);
 
         // setup adapter
-        mAdapter = new FuelListAdapter(getApplicationContext(), R.layout.fuel_row, mFuelData);
-        mFuelListView.setAdapter(mAdapter);
+
     }
 
     @Override
@@ -80,11 +99,22 @@ public class FuelListActivity extends ActionBarActivity implements CreateEntryDi
     // LISTENER FROM DIALOG
 
     @Override
-    public void onDialogPositiveClick(Date d, String s) {
-        // add this to the thingy
+    public void onDialogPositiveClick(Date d, String s, Integer i) {
         FuelEntry fe = new FuelEntry(d, s, 111, "Fancy", 34.5f, 70f);
-        mFuelData.add(fe);
+
+        // if not null, then replace, otherwise add to the end
+        if (i != null) {
+            mFuelData.set(i, fe);
+        } else {
+            mFuelData.add(fe);
+        }
+
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public FuelEntry getFuelData(int i) {
+        return this.mFuelData.get(i);
     }
 
 }
