@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class FuelListActivity extends ActionBarActivity {
+public class FuelListActivity extends ActionBarActivity implements CreateEntryDialog.EntryDialogListener {
     private Button mNewEntryButton;
     private ListView mFuelListView;
     private ArrayList<FuelEntry> mFuelData;
@@ -31,9 +31,8 @@ public class FuelListActivity extends ActionBarActivity {
         mNewEntryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // open activity that lets you make a new fuel entry
-                // probably use same XML as edit fuel entry, but
-                // a different wrapping activity
+                CreateEntryDialog d = new CreateEntryDialog();
+                d.show(getSupportFragmentManager(), "create");
             }
         });
 
@@ -77,4 +76,15 @@ public class FuelListActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    // LISTENER FROM DIALOG
+
+    @Override
+    public void onDialogPositiveClick(Date d, String s) {
+        // add this to the thingy
+        FuelEntry fe = new FuelEntry(d, s, 111, "Fancy", 34.5f, 70f);
+        mFuelData.add(fe);
+        mAdapter.notifyDataSetChanged();
+    }
+
 }
