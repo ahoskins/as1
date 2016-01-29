@@ -23,16 +23,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 
-/*
-* TODO:
-* - UML diagram
-* - document code (done)
-* - make demo video
-* - add APK file to repo
-* - test running on lab machines (done)
-* - unit tests (done)
-* */
-
 /**
 * The main and only activity of the app.
 *
